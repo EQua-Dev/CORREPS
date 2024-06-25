@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-
     id ("com.google.gms.google-services")
     id ("androidx.navigation.safeargs.kotlin")
     id ("kotlin-parcelize")
@@ -133,7 +132,7 @@ dependencies {
     implementation ("com.airbnb.android:lottie-compose:6.0.0")
 
     //implementation ("co.paystack.android:paystack:3.2.10")
-    implementation ("com.github.flutterwave.rave-android:rave_android:2.1.39")
+    //implementation ("com.github.flutterwave.rave-android:rave_android:2.1.39")
 
 
 }

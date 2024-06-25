@@ -2,6 +2,7 @@ package com.schoolprojects.corrreps.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import com.schoolprojects.corrreps.R
 
 sealed class Screen(
     val route: String,
@@ -14,11 +15,12 @@ sealed class Screen(
    /* object Signup : Screen(
         route = "signup",
         title = R.string.signup,
-    )
+    ) */
     object Login : Screen(
         route = "login",
         title = R.string.login,
     )
+    /*
     object ForgotPassword : Screen(
         route = "forgotpassword",
         title = R.string.forgot_password,

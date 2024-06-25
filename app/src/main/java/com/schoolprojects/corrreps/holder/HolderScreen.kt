@@ -27,6 +27,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.schoolprojects.corrreps.auth.LoginScreen
 import com.schoolprojects.corrreps.providers.LocalNavHost
 import com.schoolprojects.corrreps.utils.Common
 import com.schoolprojects.corrreps.utils.Common.mAuth
@@ -109,60 +110,60 @@ fun HolderScreen(
                 controller.popBackStack()
             },
             onSignUpClicked = {
-                controller.navigate(Screen.Signup.route) {
+                /*controller.navigate(Screen.Signup.route) {
                     popUpTo(Screen.Login.route) {
                         inclusive = false
                     }
-                }
+                }*/
             },
             onForgotPasswordClicked = {
-                controller.navigate(Screen.ForgotPassword.route)
+//                controller.navigate(Screen.ForgotPassword.route)
             },
             onAuthenticated = { userType ->
                 var navRoute = ""
                 when (userType) {
-                    Common.UserTypes.STUDENT.userType -> navRoute = Screen.StudentLanding.route
+                    /*Common.UserTypes.STUDENT.userType -> navRoute = Screen.StudentLanding.route
                     Common.UserTypes.LECTURER.userType -> navRoute =
-                        Screen.LecturerLandingScreen.route
+                        Screen.LecturerLandingScreen.route*/
                 }
                 controller.navigate(navRoute) {
-                    popUpTo(Screen.Login.route) {
+                   /* popUpTo(Screen.Login.route) {
                         inclusive = true
-                    }
+                    }*/
                 }
             },
             onAccountCreated = {
                 //nav to register courses
-                controller.navigate(Screen.CourseRegistration.route) {
+                /*controller.navigate(Screen.CourseRegistration.route) {
                     popUpTo(Screen.Signup.route) {
                         inclusive = true
                     }
-                }
+                }*/
             },
             onCourseRegistered = {
                 //nav to set course goals
-                controller.navigate(Screen.SetCourseGoal.route)
+                //controller.navigate(Screen.SetCourseGoal.route)
             },
             onGoalsSet = {
                 //nav to student home
-                controller.navigate(Screen.StudentLanding.route)
+                //controller.navigate(Screen.StudentLanding.route)
             },
             onViewStudentList = { level ->
-                controller.navigate(Screen.StudentList.route.replace("{level}", level))
+                //controller.navigate(Screen.StudentList.route.replace("{level}", level))
             },
             onViewStudent = { studentId ->
-                controller.navigate(Screen.StudentDetail.route.replace("{studentId}", studentId))
+                //controller.navigate(Screen.StudentDetail.route.replace("{studentId}", studentId))
             },
             onNewScreenRequest = { route, patientId ->
                 controller.navigate(route.replace("{patientId}", "$patientId"))
             },
             onLogoutRequested = {
                 mAuth.signOut()
-                controller.navigate(Screen.Login.route) {
+                /*controller.navigate(Screen.Login.route) {
                     popUpTo(Screen.Signup.route) {
                         inclusive = true
                     }
-                }
+                }*/
             }
         )
     }
@@ -203,61 +204,61 @@ fun ScaffoldSection(
             ) {
                 composable(Screen.Login.route) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
-                    /*LoginScreen(
+                    LoginScreen(
                         onSignUpClicked = onSignUpClicked,
                         onForgotPasswordClicked = onForgotPasswordClicked,
                         onAuthenticated = onAuthenticated
-                    )*/
-                }
+                    )
+                }/*
                 composable(Screen.Signup.route) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
-                   /* SignUpScreen(
+                   *//* SignUpScreen(
                         onNavigationRequested = onNavigationRequested,
                         onAccountCreated = onAccountCreated,
-                    )*/
+                    )*//*
                 }
                 composable(Screen.Login.route) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
-                   /* LoginScreen(
+                   *//* LoginScreen(
                         onSignUpClicked = onSignUpClicked,
                         onForgotPasswordClicked = onForgotPasswordClicked,
                         onAuthenticated = onAuthenticated
-                    )*/
+                    )*//*
                 }
                 composable(Screen.ForgotPassword.route) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
-                    /*ForgotPasswordScreen(
+                    *//*ForgotPasswordScreen(
                         onNavigationRequested = onNavigationRequested
-                    )*/
+                    )*//*
                 }
                 composable(Screen.CourseRegistration.route) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
-                    /*CourseRegistrationScreen(
+                    *//*CourseRegistrationScreen(
                         onBackRequested = onBackRequested,
                         onCourseRegistered = onCourseRegistered
 
-                    )*/
+                    )*//*
                 }
                 composable(Screen.SetCourseGoal.route) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
-                    /*SetGoalsScreen(
+                    *//*SetGoalsScreen(
                         onBackRequested = onBackRequested,
                         onGoalsSet = onGoalsSet
 
-                    )*/
+                    )*//*
                 }
                 composable(Screen.LecturerLandingScreen.route) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
-                    /*LecturerLandingScreen(
+                    *//*LecturerLandingScreen(
                         onLogoutRequested = onLogoutRequested,
                         onViewStudentList = onViewStudentList
-                    )*/
+                    )*//*
                 }
                 composable(Screen.StudentLanding.route) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
-                    /*StudentHomeScreen(
+                    *//*StudentHomeScreen(
                         onLogoutRequested = onLogoutRequested
-                    )*/
+                    )*//*
                 }
                 composable(
                     Screen.StudentList.route,
@@ -267,11 +268,11 @@ fun ScaffoldSection(
                 ) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
                     val level = it.arguments?.getString("level")
-                    /*StudentListScreen(
+                    *//*StudentListScreen(
                         level = level!!,
                         onViewStudent = onViewStudent,
                         onBackRequested = onBackRequested
-                    )*/
+                    )*//*
                 }
                 composable(
                     Screen.StudentDetail.route,
@@ -281,10 +282,10 @@ fun ScaffoldSection(
                 ) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
                     val studentId = it.arguments?.getString("studentId")
-                    /*StudentDetail(
+                    *//*StudentDetail(
                         studentId = studentId!!
-                    )*/
-                }
+                    )*//*
+                }*/
                 /*composable(
                     Screen.PatientOverView.route,
                     arguments = listOf(

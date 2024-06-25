@@ -20,7 +20,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
-import org.devstrike.persacg.R
+
 
 
 //toast function
@@ -28,6 +28,7 @@ fun Context.toast(message: String) =
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
 
+/*
 @Composable
 fun LoadingDialog(modifier: Modifier = Modifier) {
 
@@ -46,6 +47,7 @@ fun LoadingDialog(modifier: Modifier = Modifier) {
         )
     }
 }
+*/
 
 
 fun openWhatsapp(phoneNumber: String, context: Context) {
