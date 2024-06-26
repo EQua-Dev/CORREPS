@@ -5,7 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.schoolprojects.corrreps.models.Student
+import com.schoolprojects.corrreps.utils.Common.mAuth
+import com.schoolprojects.corrreps.utils.Common.studentsCollectionRef
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,10 +25,12 @@ class AuthViewModel @Inject constructor() : ViewModel() {
 
     val email = mutableStateOf<String>("")
     val password = mutableStateOf<String>("")
-    val confirmPassword = mutableStateOf<String>("")
+    val passwordStrength =
+        mutableStateOf<AuthViewModel.PasswordStrength>(PasswordStrength.TOO_SHORT)
     val studentFirstName = mutableStateOf<String>("")
     val studentLastName = mutableStateOf<String>("")
     val matricNo = mutableStateOf<String>("")
+    val studentDepartment = mutableStateOf<String>("")
 
     val gender = mutableStateOf<String>("")
     val showLoading = mutableStateOf<Boolean>(false)
@@ -49,10 +59,11 @@ class AuthViewModel @Inject constructor() : ViewModel() {
 
     fun updatePassword(value: String) {
         this.password.value = value
+        this.passwordStrength.value = passwordStrength(value)
     }
 
-    fun updateConfirmPassword(value: String) {
-        this.confirmPassword.value = value
+    fun updateStudentDepartment(value: String) {
+        this.studentDepartment.value = value
     }
 
     fun updateMatricNo(value: String) {
@@ -65,39 +76,31 @@ class AuthViewModel @Inject constructor() : ViewModel() {
         currentSelectedGenderIndex.intValue = index
     }
 
-   /* fun createStudent(
-        //hospital: Hospital,
-        email: String,
-        matricNo: String,
-        firstName: String,
-        lastName: String,
-        gender: String,
-        password: String,
-        confirmPassword: String,
+    fun createStudent(
         onLoading: (isLoading: Boolean) -> Unit,
         onStudentCreated: () -> Unit,
         onStudentNotCreated: (error: String) -> Unit
     ) {
         onLoading(true)
 
-        if (firstName.isEmpty()) {
+        if (this.studentFirstName.value.isEmpty()) {
             onLoading(false)
             _errorLiveData.value = "First Name cannot be empty"
             onStudentNotCreated(errorLiveData.value!!)
-        } else if (lastName.isEmpty()) {
+        } else if (this.studentLastName.value.isEmpty()) {
             onLoading(false)
             _errorLiveData.value = "Last Name cannot be empty"
             onStudentNotCreated(errorLiveData.value!!)
-        } else if (!isValidMatricNumberFormat(matricNo)) {
+        } else if (!isValidMatricNumberFormat(this.matricNo.value)) {
             onLoading(false)
             _errorLiveData.value = "Enter valid CST matric number format"
             onStudentNotCreated(errorLiveData.value!!)
-        } else if (!isValidEmail(email)) {
+        } else if (!isValidEmail(this.email.value)) {
             onLoading(false)
             _errorLiveData.value = "Enter valid email"
             onStudentNotCreated(errorLiveData.value!!)
         } else {
-            when (passwordStrength(password)) {
+            when (passwordStrength(this.password.value)) {
                 PasswordStrength.TOO_SHORT -> {
                     onLoading(false)
                     _errorLiveData.value = "Password must be at least 8 characters"
@@ -119,88 +122,80 @@ class AuthViewModel @Inject constructor() : ViewModel() {
                 }
 
                 PasswordStrength.STRONG -> {
-
-                    if (confirmPassword != password) {
-                        onLoading(false)
-                        _errorLiveData.value = "Password must match"
-                        onStudentNotCreated(errorLiveData.value!!)
-                    } else {
-                        mAuth.createUserWithEmailAndPassword(email, password)
-                            .addOnCompleteListener {
-                                if (it.isSuccessful) {
-                                    val newUserId = mAuth.uid!!
-                                    //val user = mAuth.currentUser
-                                    val newStudent = Student(
-                                        studentId = newUserId,
-                                        matricNo = matricNo,
-                                        studentFirstName = firstName,
-                                        studentLastName = lastName,
-                                        studentDepartment = "Computer Science",
-                                        studentEmail = email,
-                                        studentGender = gender,
-                                        studentLevel = "100",
-                                        studentSemester = "1st",
-                                        CGPA = 0.00
-                                    )
-                                    saveStudent(
-                                        newStudent,
-                                        onLoading,
-                                        onStudentCreated,
-                                        onStudentNotCreated
-                                    )
-                                } else {
-                                    it.exception?.message?.let { message ->
-                                        onLoading(false)
-                                        _errorLiveData.value = message
-                                    }
-                                }
-                            }.addOnFailureListener {
-                                it.message?.let { message ->
+                    mAuth.createUserWithEmailAndPassword(this.email.value, this.password.value)
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                val newUserId = mAuth.uid!!
+                                //val user = mAuth.currentUser
+                                val newStudent = Student(
+                                    studentId = newUserId,
+                                    studentFirstName = this.studentFirstName.value,
+                                    studentLastName = this.studentLastName.value,
+                                    studentRegNo = this.matricNo.value,
+                                    studentEmail = this.email.value,
+                                    studentGender = this.gender.value,
+                                    studentDepartment = this.studentDepartment.value,
+                                    studentCurrentLevel = "100",
+                                    studentCurrentSemester = "1",
+                                )
+                                saveStudent(
+                                    newStudent,
+                                    onLoading,
+                                    onStudentCreated,
+                                    onStudentNotCreated
+                                )
+                            } else {
+                                it.exception?.message?.let { message ->
                                     onLoading(false)
                                     _errorLiveData.value = message
                                 }
                             }
-                    }
+                        }.addOnFailureListener {
+                            it.message?.let { message ->
+                                onLoading(false)
+                                _errorLiveData.value = message
+                            }
+                        }
+
                 }
 
             }
         }
 
-    }*/
-
-  /*  fun login(
-        email: String,
-        password: String,
-        onLoading: (isLoading: Boolean) -> Unit,
-        onAuthenticated: (userType: String) -> Unit,
-        onAuthenticationFailed: (error: String) -> Unit
-    ) {
-        onLoading(true)
-        if (email.isEmpty() || password.isEmpty()) {
-            onLoading(false)
-            val error = "Some fields are missing"
-            onAuthenticationFailed(error)
-        } else {
-            if (email == "admin@gmail.com" && password == "!Admin1234") {
-                onLoading(false)
-                onAuthenticated(Common.UserTypes.LECTURER.userType)
-            } else {
-                email.let { mAuth.signInWithEmailAndPassword(it, password) }
-                    .addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            onLoading(false)
-                            onAuthenticated(Common.UserTypes.STUDENT.userType)
-                        } else {
-                            onLoading(false)
-                            Log.d("TAG", "login: ${it.exception?.message ?: "Some error occurred"}")
-                            onAuthenticationFailed(it.exception?.message ?: "Some error occurred")
-                        }
-                    }
-            }
-        }
     }
-*/
-/*
+
+    /*  fun login(
+          email: String,
+          password: String,
+          onLoading: (isLoading: Boolean) -> Unit,
+          onAuthenticated: (userType: String) -> Unit,
+          onAuthenticationFailed: (error: String) -> Unit
+      ) {
+          onLoading(true)
+          if (email.isEmpty() || password.isEmpty()) {
+              onLoading(false)
+              val error = "Some fields are missing"
+              onAuthenticationFailed(error)
+          } else {
+              if (email == "admin@gmail.com" && password == "!Admin1234") {
+                  onLoading(false)
+                  onAuthenticated(Common.UserTypes.LECTURER.userType)
+              } else {
+                  email.let { mAuth.signInWithEmailAndPassword(it, password) }
+                      .addOnCompleteListener {
+                          if (it.isSuccessful) {
+                              onLoading(false)
+                              onAuthenticated(Common.UserTypes.STUDENT.userType)
+                          } else {
+                              onLoading(false)
+                              Log.d("TAG", "login: ${it.exception?.message ?: "Some error occurred"}")
+                              onAuthenticationFailed(it.exception?.message ?: "Some error occurred")
+                          }
+                      }
+              }
+          }
+      }
+  */
     private fun saveStudent(
         studentData: Student,
         onLoading: (isLoading: Boolean) -> Unit,
@@ -224,92 +219,91 @@ class AuthViewModel @Inject constructor() : ViewModel() {
 
         }
     }
-*/
 
-/*
-    fun resetPassword(
-        email: String,
-        onLoading: (Boolean) -> Unit,
-        onResetLinkSent: (String) -> Unit,
-        onResetLinkNotSent: (String) -> Unit
-    ) = CoroutineScope(Dispatchers.IO).launch {
-        onLoading(true)
-        if (!isValidEmail(email)) {
-            onLoading(false)
-        } else {
-            mAuth.sendPasswordResetEmail(email)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
+    /*
+        fun resetPassword(
+            email: String,
+            onLoading: (Boolean) -> Unit,
+            onResetLinkSent: (String) -> Unit,
+            onResetLinkNotSent: (String) -> Unit
+        ) = CoroutineScope(Dispatchers.IO).launch {
+            onLoading(true)
+            if (!isValidEmail(email)) {
+                onLoading(false)
+            } else {
+                mAuth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            onLoading(false)
+                            onResetLinkSent("Password Reset Link Sent\nCheck your email")
+                        } else {
+                            onLoading(false)
+                            onResetLinkNotSent("Password Reset Link Sent\nCheck your email")
+                        }
+                    }.addOnFailureListener { e ->
                         onLoading(false)
-                        onResetLinkSent("Password Reset Link Sent\nCheck your email")
-                    } else {
-                        onLoading(false)
-                        onResetLinkNotSent("Password Reset Link Sent\nCheck your email")
+                        onResetLinkSent(e.message ?: "Some error occurred")
                     }
-                }.addOnFailureListener { e ->
-                    onLoading(false)
-                    onResetLinkSent(e.message ?: "Some error occurred")
-                }
+            }
+    }
+    */
+
+
+    private fun passwordStrength(password: String): PasswordStrength {
+        // Minimum length requirement
+        val minLength = 8
+
+        // Check for minimum length
+        if (password.length < minLength) {
+            return PasswordStrength.TOO_SHORT
         }
-}
-*/
 
+        // Check for uppercase, lowercase, digit, and special character
+        val hasUpperCase = password.any { it.isUpperCase() }
+        val hasLowerCase = password.any { it.isLowerCase() }
+        val hasDigit = password.any { it.isDigit() }
+        val hasSpecial = password.any { !it.isLetterOrDigit() }
 
-private fun passwordStrength(password: String): PasswordStrength {
-    // Minimum length requirement
-    val minLength = 8
+        // Calculate score based on conditions
+        val score = listOf(
+            hasUpperCase,
+            hasLowerCase,
+            hasDigit,
+            hasSpecial
+        ).count { it }
 
-    // Check for minimum length
-    if (password.length < minLength) {
-        return PasswordStrength.TOO_SHORT
+        // Determine strength based on score
+        return when {
+            score == 4 -> PasswordStrength.STRONG
+            score >= 3 -> PasswordStrength.MEDIUM
+            else -> PasswordStrength.WEAK
+        }
     }
 
-    // Check for uppercase, lowercase, digit, and special character
-    val hasUpperCase = password.any { it.isUpperCase() }
-    val hasLowerCase = password.any { it.isLowerCase() }
-    val hasDigit = password.any { it.isDigit() }
-    val hasSpecial = password.any { !it.isLetterOrDigit() }
-
-    // Calculate score based on conditions
-    val score = listOf(
-        hasUpperCase,
-        hasLowerCase,
-        hasDigit,
-        hasSpecial
-    ).count { it }
-
-    // Determine strength based on score
-    return when {
-        score == 4 -> PasswordStrength.STRONG
-        score >= 3 -> PasswordStrength.MEDIUM
-        else -> PasswordStrength.WEAK
-    }
-}
-
-// Enum to represent password strength
-enum class PasswordStrength {
-    WEAK,
-    MEDIUM,
-    STRONG,
-    TOO_SHORT
-}
-
-fun isValidEmail(email: String): Boolean {
-    val emailRegex = Regex("^\\w+([.-]?\\w+)*@\\w+([.-]?\\w+)*(\\.\\w{2,})+\$")
-    return emailRegex.matches(email)
-}
-
-fun isValidMatricNumberFormat(text: String): Boolean {
-    val customFormatRegex = Regex("^CST/\\d{4}/\\d+$")
-    if (!customFormatRegex.matches(text)) {
-        return false
+    // Enum to represent password strength
+    enum class PasswordStrength {
+        WEAK,
+        MEDIUM,
+        STRONG,
+        TOO_SHORT
     }
 
-    val parts = text.split("/")
-    val year = parts[1].toIntOrNull()
+    fun isValidEmail(email: String): Boolean {
+        val emailRegex = Regex("^\\w+([.-]?\\w+)*@\\w+([.-]?\\w+)*(\\.\\w{2,})+\$")
+        return emailRegex.matches(email)
+    }
 
-    // Check if the year is a valid 4-digit year
-    return year != null && year in 1000..9999
-}
+    fun isValidMatricNumberFormat(text: String): Boolean {
+        val customFormatRegex = Regex("^CST/\\d{4}/\\d+$")
+        if (!customFormatRegex.matches(text)) {
+            return false
+        }
+
+        val parts = text.split("/")
+        val year = parts[1].toIntOrNull()
+
+        // Check if the year is a valid 4-digit year
+        return year != null && year in 1000..9999
+    }
 
 }

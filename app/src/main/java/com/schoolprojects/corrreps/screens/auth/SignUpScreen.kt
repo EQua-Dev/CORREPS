@@ -26,8 +26,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.schoolprojects.corrreps.components.CustomSnackbar
 import com.schoolprojects.corrreps.components.DropdownField
 import com.schoolprojects.corrreps.components.FlatButton
+import com.schoolprojects.corrreps.components.PasswordStrengthIndicator
 import com.schoolprojects.corrreps.navigation.Screen
 import com.schoolprojects.corrreps.viewmodels.AuthViewModel
 
@@ -39,24 +41,27 @@ fun SignUpScreen(
 ) {
 
     val context = LocalContext.current
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
-    var regNumber by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var selectedDepartment by remember { mutableStateOf("") }
-    var selectedGender by remember { mutableStateOf("") }
+    var showSnackbar by remember { mutableStateOf(false) }
+
+    var errorMessage = remember {
+        mutableStateOf("")
+    }
+    var firstName by remember { authViewModel.studentFirstName }
+    var lastName by remember { authViewModel.studentLastName }
+    var regNumber by remember { authViewModel.matricNo }
+    var email by remember { authViewModel.email }
+    var password by remember { authViewModel.password }
+    val passwordStrength by remember { authViewModel.passwordStrength }
+    var selectedDepartment by remember { authViewModel.studentDepartment }
+    var selectedGender by remember { authViewModel.gender }
 
     val departments = listOf(
         "Computer Science",
-        "Mechanical Engineering",
-        "Electrical Engineering",
-        "Business Administration"
     )
-    val genders = listOf("Male", "Female", "Other")
+    val genders = listOf("Male", "Female")
 
 
-    val showLoading = remember { mutableStateOf(false) }
+    val showLoading = remember { authViewModel.showLoading }
 
 
     val selectedGenderType = remember {
@@ -82,7 +87,7 @@ fun SignUpScreen(
 
             CustomTextField(
                 value = firstName,
-                onValueChange = { firstName = it },
+                onValueChange = { authViewModel.updateFirstName(it) },
                 label = "First Name",
                 placeholder = "First Name",
                 keyboardType = KeyboardType.Text,
@@ -93,7 +98,7 @@ fun SignUpScreen(
 
             CustomTextField(
                 value = lastName,
-                onValueChange = { lastName = it },
+                onValueChange = { authViewModel.updateLastName(it) },
                 label = "Last Name",
                 placeholder = "Last Name",
                 keyboardType = KeyboardType.Text,
@@ -104,7 +109,7 @@ fun SignUpScreen(
 
             CustomTextField(
                 value = regNumber,
-                onValueChange = { regNumber = it },
+                onValueChange = { authViewModel.updateMatricNo(it) },
                 label = "Reg Number",
                 placeholder = "Reg Number",
                 keyboardType = KeyboardType.Number,
@@ -115,7 +120,7 @@ fun SignUpScreen(
 
             CustomTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { authViewModel.updateEmail(it) },
                 label = "Email",
                 placeholder = "Email",
                 keyboardType = KeyboardType.Email,
@@ -126,19 +131,21 @@ fun SignUpScreen(
 
             CustomTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { authViewModel.updatePassword(it) },
                 label = "Password",
                 placeholder = "Password",
                 keyboardType = KeyboardType.Password,
                 isPassword = true,
                 modifier = Modifier.fillMaxWidth()
             )
+            PasswordStrengthIndicator(passwordStrength)
+
 
             Spacer(modifier = Modifier.height(8.dp))
 
             DropdownField(
                 selectedValue = selectedDepartment,
-                onValueChange = { selectedDepartment = it },
+                onValueChange = { authViewModel.updateStudentDepartment(it) },
                 label = "School Department",
                 options = departments,
                 modifier = Modifier.fillMaxWidth(),
@@ -149,7 +156,7 @@ fun SignUpScreen(
 
             DropdownField(
                 selectedValue = selectedGender,
-                onValueChange = { selectedGender = it },
+                onValueChange = { authViewModel.updateGender(it) },
                 label = "Gender",
                 options = genders,
                 modifier = Modifier.fillMaxWidth(),
@@ -161,7 +168,15 @@ fun SignUpScreen(
             FlatButton(
                 text = "Sign Up",
                 onClick = {
-                    onNavigationRequested(Screen.Login.route, false)
+                    authViewModel.createStudent(onLoading = {
+                        authViewModel.updateLoadingStatus(it)
+                    },
+                        onStudentCreated = {
+                            onNavigationRequested(Screen.Login.route, false)
+                        }, onStudentNotCreated = { error ->
+                            errorMessage.value = error
+                            showSnackbar = true
+                        })
                 },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -170,10 +185,8 @@ fun SignUpScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-
-                Text("Have Account? ")
-                TextButton(onClick = { /* Handle create account */ }) {
-                    Text("Login Instead")
+                TextButton(onClick = { onNavigationRequested(Screen.Login.route, false) }) {
+                    Text(" Have Account? Login Instead")
                 }
 
 
@@ -181,6 +194,21 @@ fun SignUpScreen(
         }
         if (showLoading.value) {
             CircularProgressIndicator(modifier = Modifier.size(64.dp))
+        }
+
+        if (showSnackbar) {
+            CustomSnackbar(
+                message = errorMessage.value,
+                actionLabel = "",
+                onActionClick = {
+                    // Handle action click
+                    showSnackbar = false
+                },
+                onDismiss = {
+                    // Handle dismiss
+                    showSnackbar = false
+                }
+            )
         }
     }
 }

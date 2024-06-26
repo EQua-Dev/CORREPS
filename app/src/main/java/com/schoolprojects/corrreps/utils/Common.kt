@@ -48,9 +48,9 @@ object Common {
         APPOINTMENTS("APPOINTMENTS")
     }
 
-    private const val STUDENTS_REF = "Students"
-    private const val LECTURERS_REF = "Lecturers"
-    private const val COURSES_REF = "Course"
+    private const val STUDENTS_REF = "Correps Students"
+    private const val LECTURERS_REF = "Correps Lecturers"
+    private const val COURSES_REF = "Courses"
     //const val HEALTH_RECORD_REF = "Patrealysis Health Record"
 
     val studentsCollectionRef = Firebase.firestore.collection(STUDENTS_REF)
