@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.schoolprojects.corrreps.models.Student
+import com.schoolprojects.corrreps.utils.Common
 import com.schoolprojects.corrreps.utils.Common.mAuth
 import com.schoolprojects.corrreps.utils.Common.studentsCollectionRef
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -164,38 +165,35 @@ class AuthViewModel @Inject constructor() : ViewModel() {
 
     }
 
-    /*  fun login(
-          email: String,
-          password: String,
+      fun login(
           onLoading: (isLoading: Boolean) -> Unit,
           onAuthenticated: (userType: String) -> Unit,
           onAuthenticationFailed: (error: String) -> Unit
       ) {
           onLoading(true)
-          if (email.isEmpty() || password.isEmpty()) {
+          if (this.email.value.isEmpty() || this.password.value.isEmpty()) {
               onLoading(false)
               val error = "Some fields are missing"
               onAuthenticationFailed(error)
           } else {
-              if (email == "admin@gmail.com" && password == "!Admin1234") {
+              if (this.email.value == "admin@gmail.com" && this.password.value == "!Admin1234") {
                   onLoading(false)
                   onAuthenticated(Common.UserTypes.LECTURER.userType)
               } else {
-                  email.let { mAuth.signInWithEmailAndPassword(it, password) }
+                  this.email.value.let { mAuth.signInWithEmailAndPassword(it, this.password.value) }
                       .addOnCompleteListener {
                           if (it.isSuccessful) {
                               onLoading(false)
                               onAuthenticated(Common.UserTypes.STUDENT.userType)
                           } else {
                               onLoading(false)
-                              Log.d("TAG", "login: ${it.exception?.message ?: "Some error occurred"}")
+
                               onAuthenticationFailed(it.exception?.message ?: "Some error occurred")
                           }
                       }
               }
           }
       }
-  */
     private fun saveStudent(
         studentData: Student,
         onLoading: (isLoading: Boolean) -> Unit,

@@ -31,6 +31,7 @@ import com.schoolprojects.corrreps.utils.Common.mAuth
 import com.schoolprojects.corrreps.navigation.Screen
 import com.schoolprojects.corrreps.screens.auth.ForgotPasswordScreen
 import com.schoolprojects.corrreps.screens.auth.SignUpScreen
+import com.schoolprojects.corrreps.screens.student.StudentHomeScreen
 import org.devstrike.persacg.presentation.screens.holder.HolderViewModel
 import com.schoolprojects.corrreps.utils.getDp
 
@@ -216,6 +217,13 @@ fun ScaffoldSection(
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
                     ForgotPasswordScreen(
                         onNavigationRequested = onNavigationRequested
+                    )
+                }
+
+                composable(Screen.StudentHome.route) {
+                    onStatusBarColorChange(MaterialTheme.colorScheme.background)
+                    StudentHomeScreen(
+                        onNavigationRequested = onNavigationRequested,
                     )
                 }
                 /*

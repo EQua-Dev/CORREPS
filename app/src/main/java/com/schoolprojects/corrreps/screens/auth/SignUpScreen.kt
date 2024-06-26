@@ -43,17 +43,17 @@ fun SignUpScreen(
     val context = LocalContext.current
     var showSnackbar by remember { mutableStateOf(false) }
 
-    var errorMessage = remember {
+    val errorMessage = remember {
         mutableStateOf("")
     }
-    var firstName by remember { authViewModel.studentFirstName }
-    var lastName by remember { authViewModel.studentLastName }
-    var regNumber by remember { authViewModel.matricNo }
-    var email by remember { authViewModel.email }
-    var password by remember { authViewModel.password }
+    val firstName by remember { authViewModel.studentFirstName }
+    val lastName by remember { authViewModel.studentLastName }
+    val regNumber by remember { authViewModel.matricNo }
+    val email by remember { authViewModel.email }
+    val password by remember { authViewModel.password }
     val passwordStrength by remember { authViewModel.passwordStrength }
-    var selectedDepartment by remember { authViewModel.studentDepartment }
-    var selectedGender by remember { authViewModel.gender }
+    val selectedDepartment by remember { authViewModel.studentDepartment }
+    val selectedGender by remember { authViewModel.gender }
 
     val departments = listOf(
         "Computer Science",
@@ -191,24 +191,24 @@ fun SignUpScreen(
 
 
             }
+            if (showSnackbar) {
+                CustomSnackbar(
+                    message = errorMessage.value,
+                    actionLabel = "",
+                    onActionClick = {
+                        // Handle action click
+                        showSnackbar = false
+                    },
+                    onDismiss = {
+                        // Handle dismiss
+                        showSnackbar = false
+                    }
+                )
+            }
         }
         if (showLoading.value) {
             CircularProgressIndicator(modifier = Modifier.size(64.dp))
         }
 
-        if (showSnackbar) {
-            CustomSnackbar(
-                message = errorMessage.value,
-                actionLabel = "",
-                onActionClick = {
-                    // Handle action click
-                    showSnackbar = false
-                },
-                onDismiss = {
-                    // Handle dismiss
-                    showSnackbar = false
-                }
-            )
-        }
     }
 }

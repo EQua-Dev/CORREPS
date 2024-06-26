@@ -25,6 +25,10 @@ sealed class Screen(
         route = "forgotpassword",
         title = R.string.forgot_password,
     )
+    object StudentHome : Screen(
+        route = "studenthome",
+        title = R.string.student_home,
+    )
     /*
     object CourseRegistration : Screen(
         route = "courseregistration",

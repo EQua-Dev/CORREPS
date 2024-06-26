@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.schoolprojects.corrreps.R
+import com.schoolprojects.corrreps.components.CustomSnackbar
 import com.schoolprojects.corrreps.components.FlatButton
 import com.schoolprojects.corrreps.navigation.Screen
 import com.schoolprojects.corrreps.viewmodels.AuthViewModel
@@ -55,15 +56,15 @@ fun LoginScreen(
     onAuthenticated: (String) -> Unit,
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
 
-    /* val context = LocalContext.current
-     val email by remember { authViewModel.email }
-     val password by remember { authViewModel.password }
+    val context = LocalContext.current
+    val email by remember { authViewModel.email }
+    val password by remember { authViewModel.password }
 
-     val showLoading by remember { mutableStateOf(authViewModel.showLoading) }
- */
+    val errorMessage = remember { mutableStateOf("") }
+    val showLoading by remember { mutableStateOf(authViewModel.showLoading) }
+    var showSnackbar by remember { mutableStateOf(false) }
+
 
     Box(modifier = Modifier.padding(12.dp), contentAlignment = Alignment.Center) {
 
@@ -81,18 +82,18 @@ fun LoginScreen(
 
             CustomTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { authViewModel.updateEmail(it) },
                 label = "Email",
                 placeholder = "Email",
                 keyboardType = KeyboardType.Email,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             CustomTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = { authViewModel.updatePassword(it) },
                 label = "Password",
                 placeholder = "Password",
                 keyboardType = KeyboardType.Password,
@@ -104,7 +105,18 @@ fun LoginScreen(
 
             FlatButton(
                 text = stringResource(id = R.string.login),
-                onClick = { /* Handle login */ },
+                onClick = {
+                    authViewModel.login(
+                        onLoading = {
+                            showLoading.value = it
+                        },
+                        onAuthenticated = {
+                            onNavigationRequested(Screen.StudentHome.route, false)
+                        },
+                        onAuthenticationFailed = { error ->
+                            errorMessage.value = error
+                        })
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -150,6 +162,28 @@ fun LoginScreen(
             TextButton(onClick = { /* Handle pay fees */ }) {
                 Text("Pay Fees")
             }
+
+        }
+        if (showLoading.value) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(modifier = Modifier.size(64.dp))
+
+            }
+        }
+
+        if (showSnackbar) {
+            CustomSnackbar(
+                message = errorMessage.value,
+                actionLabel = "",
+                onActionClick = {
+                    // Handle action click
+                    showSnackbar = false
+                },
+                onDismiss = {
+                    // Handle dismiss
+                    showSnackbar = false
+                }
+            )
         }
 
     }
