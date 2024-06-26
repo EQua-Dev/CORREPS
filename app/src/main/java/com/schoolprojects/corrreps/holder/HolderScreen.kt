@@ -22,18 +22,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.navArgument
-import com.schoolprojects.corrreps.auth.LoginScreen
+import com.schoolprojects.corrreps.screens.auth.LoginScreen
 import com.schoolprojects.corrreps.providers.LocalNavHost
-import com.schoolprojects.corrreps.utils.Common
 import com.schoolprojects.corrreps.utils.Common.mAuth
 import com.schoolprojects.corrreps.navigation.Screen
+import com.schoolprojects.corrreps.screens.auth.ForgotPasswordScreen
+import com.schoolprojects.corrreps.screens.auth.SignUpScreen
 import org.devstrike.persacg.presentation.screens.holder.HolderViewModel
-import org.devstrike.persacg.utils.getDp
+import com.schoolprojects.corrreps.utils.getDp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -109,16 +108,6 @@ fun HolderScreen(
             onBackRequested = {
                 controller.popBackStack()
             },
-            onSignUpClicked = {
-                /*controller.navigate(Screen.Signup.route) {
-                    popUpTo(Screen.Login.route) {
-                        inclusive = false
-                    }
-                }*/
-            },
-            onForgotPasswordClicked = {
-//                controller.navigate(Screen.ForgotPassword.route)
-            },
             onAuthenticated = { userType ->
                 var navRoute = ""
                 when (userType) {
@@ -127,9 +116,9 @@ fun HolderScreen(
                         Screen.LecturerLandingScreen.route*/
                 }
                 controller.navigate(navRoute) {
-                   /* popUpTo(Screen.Login.route) {
-                        inclusive = true
-                    }*/
+                    /* popUpTo(Screen.Login.route) {
+                         inclusive = true
+                     }*/
                 }
             },
             onAccountCreated = {
@@ -177,8 +166,6 @@ fun ScaffoldSection(
     onStatusBarColorChange: (color: Color) -> Unit,
     onNavigationRequested: (route: String, removePreviousRoute: Boolean) -> Unit,
     onBackRequested: () -> Unit,
-    onSignUpClicked: () -> Unit,
-    onForgotPasswordClicked: () -> Unit,
     onAuthenticated: (userType: String) -> Unit,
     onAccountCreated: () -> Unit,
     onCourseRegistered: () -> Unit,
@@ -205,35 +192,36 @@ fun ScaffoldSection(
                 composable(Screen.Login.route) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
                     LoginScreen(
+                        onNavigationRequested = onNavigationRequested,
+                        onAuthenticated = onAuthenticated
+                    )
+                }
+                composable(Screen.Signup.route) {
+                    onStatusBarColorChange(MaterialTheme.colorScheme.background)
+                    SignUpScreen(
+                        onNavigationRequested = onNavigationRequested,
+                        onAccountCreated = onAccountCreated,
+                    )
+                }
+                /*
+                    composable(Screen.Login.route) {
+                        onStatusBarColorChange(MaterialTheme.colorScheme.background)
+                       *//* LoginScreen(
                         onSignUpClicked = onSignUpClicked,
                         onForgotPasswordClicked = onForgotPasswordClicked,
                         onAuthenticated = onAuthenticated
                     )
-                }/*
-                composable(Screen.Signup.route) {
-                    onStatusBarColorChange(MaterialTheme.colorScheme.background)
-                   *//* SignUpScreen(
-                        onNavigationRequested = onNavigationRequested,
-                        onAccountCreated = onAccountCreated,
-                    )*//*
-                }
-                composable(Screen.Login.route) {
-                    onStatusBarColorChange(MaterialTheme.colorScheme.background)
-                   *//* LoginScreen(
-                        onSignUpClicked = onSignUpClicked,
-                        onForgotPasswordClicked = onForgotPasswordClicked,
-                        onAuthenticated = onAuthenticated
-                    )*//*
-                }
+                }*/
                 composable(Screen.ForgotPassword.route) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
-                    *//*ForgotPasswordScreen(
+                    ForgotPasswordScreen(
                         onNavigationRequested = onNavigationRequested
-                    )*//*
+                    )
                 }
-                composable(Screen.CourseRegistration.route) {
-                    onStatusBarColorChange(MaterialTheme.colorScheme.background)
-                    *//*CourseRegistrationScreen(
+                /*
+                    composable(Screen.CourseRegistration.route) {
+                        onStatusBarColorChange(MaterialTheme.colorScheme.background)
+                        *//*CourseRegistrationScreen(
                         onBackRequested = onBackRequested,
                         onCourseRegistered = onCourseRegistered
 

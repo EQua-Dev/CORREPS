@@ -12,19 +12,20 @@ sealed class Screen(
     object Splash : Screen(
         route = "splash",
     )
-   /* object Signup : Screen(
+   object Signup : Screen(
         route = "signup",
         title = R.string.signup,
-    ) */
+    )
     object Login : Screen(
         route = "login",
         title = R.string.login,
     )
-    /*
+
     object ForgotPassword : Screen(
         route = "forgotpassword",
         title = R.string.forgot_password,
     )
+    /*
     object CourseRegistration : Screen(
         route = "courseregistration",
         title = R.string.course_reg,

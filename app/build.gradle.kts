@@ -131,6 +131,9 @@ dependencies {
     implementation ("io.github.amrdeveloper:lottiedialog:1.0.0")
     implementation ("com.airbnb.android:lottie-compose:6.0.0")
 
+    implementation ("androidx.compose.material:material-icons-extended:1.5.0")
+
+
     //implementation ("co.paystack.android:paystack:3.2.10")
     //implementation ("com.github.flutterwave.rave-android:rave_android:2.1.39")
 

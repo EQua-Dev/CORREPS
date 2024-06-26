@@ -6,8 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,14 +14,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.schoolprojects.corrreps.holder.HolderScreen
 import com.schoolprojects.corrreps.providers.LocalNavHost
 import com.schoolprojects.corrreps.ui.theme.CORREPSTheme
 import dagger.hilt.android.AndroidEntryPoint
-import org.devstrike.persacg.utils.LocalScreenSize
-import org.devstrike.persacg.utils.getScreenSize
+import com.schoolprojects.corrreps.utils.LocalScreenSize
+import com.schoolprojects.corrreps.utils.getScreenSize
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
