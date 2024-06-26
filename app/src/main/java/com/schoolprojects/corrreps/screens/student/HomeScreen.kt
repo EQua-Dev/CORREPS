@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,14 +23,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.schoolprojects.corrreps.components.ExpandableCard
 import com.schoolprojects.corrreps.models.Student
 import com.schoolprojects.corrreps.network.getStudentInfo
+import com.schoolprojects.corrreps.utils.Common
 import com.schoolprojects.corrreps.utils.Common.mAuth
 import com.schoolprojects.corrreps.viewmodels.StudentHomeViewModel
 
 @Composable
 fun StudentHomeScreen(
     onNavigationRequested: (String, Boolean) -> Unit,
+    onSemesterSelected: (level: String, semester: String) -> Unit,
     studentHomeViewModel: StudentHomeViewModel = hiltViewModel()
 ) {
 
@@ -53,20 +58,32 @@ fun StudentHomeScreen(
             })
     }
 
-    Column(modifier = Modifier.padding(8.dp)) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Column {
-                val studentName = "${studentData.studentFirstName} ${studentData.studentLastName}"
-                Text(text = studentName)
-                Text(text = studentData.studentRegNo)
-            }
-            Spacer(modifier = Modifier.weight(1.0f))
-            Column {
-                Text(text = "Level: ${studentData.studentCurrentLevel}")
-                Text(text = "Semester: ${studentData.studentCurrentSemester}")
-                Text(text = studentData.studentCGPA, fontWeight = FontWeight.Bold)
+    LazyColumn(modifier = Modifier.padding(8.dp)) {
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    val studentName =
+                        "${studentData.studentFirstName} ${studentData.studentLastName}"
+                    Text(text = studentName)
+                    Text(text = studentData.studentRegNo)
+                }
+                Spacer(modifier = Modifier.weight(1.0f))
+                Column {
+                    Text(text = "Level: ${studentData.studentCurrentLevel}")
+                    Text(text = "Semester: ${studentData.studentCurrentSemester}")
+                    Text(text = studentData.studentCGPA, fontWeight = FontWeight.Bold)
+                }
             }
         }
+        items(Common.Levels.entries) { level ->
+            ExpandableCard(level, onSemesterClicked = { semester ->
+                onSemesterSelected(level.level, semester)
+            })
+        }
+
     }
     if (showLoading.value) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

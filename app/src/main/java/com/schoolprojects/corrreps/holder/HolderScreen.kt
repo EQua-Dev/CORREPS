@@ -22,15 +22,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.schoolprojects.corrreps.screens.auth.LoginScreen
 import com.schoolprojects.corrreps.providers.LocalNavHost
 import com.schoolprojects.corrreps.utils.Common.mAuth
 import com.schoolprojects.corrreps.navigation.Screen
 import com.schoolprojects.corrreps.screens.auth.ForgotPasswordScreen
 import com.schoolprojects.corrreps.screens.auth.SignUpScreen
+import com.schoolprojects.corrreps.screens.student.SemesterScreen
 import com.schoolprojects.corrreps.screens.student.StudentHomeScreen
 import org.devstrike.persacg.presentation.screens.holder.HolderViewModel
 import com.schoolprojects.corrreps.utils.getDp
@@ -138,8 +141,12 @@ fun HolderScreen(
                 //nav to student home
                 //controller.navigate(Screen.StudentLanding.route)
             },
-            onViewStudentList = { level ->
-                //controller.navigate(Screen.StudentList.route.replace("{level}", level))
+            onSemesterSelected = { level, semester ->
+                controller.navigate(
+                    Screen.SemesterScreen.route.replace("{level}", level)
+                        .replace("{semester}", semester)
+                )
+
             },
             onViewStudent = { studentId ->
                 //controller.navigate(Screen.StudentDetail.route.replace("{studentId}", studentId))
@@ -171,7 +178,7 @@ fun ScaffoldSection(
     onAccountCreated: () -> Unit,
     onCourseRegistered: () -> Unit,
     onGoalsSet: () -> Unit,
-    onViewStudentList: (level: String) -> Unit,
+    onSemesterSelected: (level: String, semester: String) -> Unit,
     onViewStudent: (studentId: String) -> Unit,
     onNewScreenRequest: (route: String, id: String?) -> Unit,
     onLogoutRequested: () -> Unit
@@ -224,6 +231,7 @@ fun ScaffoldSection(
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
                     StudentHomeScreen(
                         onNavigationRequested = onNavigationRequested,
+                        onSemesterSelected = onSemesterSelected
                     )
                 }
                 /*
@@ -233,16 +241,25 @@ fun ScaffoldSection(
                         onBackRequested = onBackRequested,
                         onCourseRegistered = onCourseRegistered
 
-                    )*//*
-                }
-                composable(Screen.SetCourseGoal.route) {
+                    )
+                }*/
+                composable(
+                    Screen.SemesterScreen.route,
+                    arguments = listOf(
+                        navArgument(name = "level") { type = NavType.StringType },
+                        navArgument(name = "semester") { type = NavType.StringType }
+                    ),
+                ) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
-                    *//*SetGoalsScreen(
-                        onBackRequested = onBackRequested,
-                        onGoalsSet = onGoalsSet
+                    val level = it.arguments?.getString("level")
+                    val semester = it.arguments?.getString("semester")
+                    SemesterScreen(
+                        level = level!!, semester = semester!!
+                        //onBackRequested = onBackRequested,
 
-                    )*//*
+                    )
                 }
+                /*
                 composable(Screen.LecturerLandingScreen.route) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
                     *//*LecturerLandingScreen(

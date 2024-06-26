@@ -31,22 +31,19 @@ object Common {
     val mAuth = FirebaseAuth.getInstance()
     val fireStoreDB = Firebase.firestore.batch()
 
-    enum class HRStatus(val status: String) {
-        ASSIGNED("Assigned"),
-        ONGOING("Ongoing"),
-        ATTENDED("Attended"),
-    }
-
     enum class UserTypes(val userType: String) {
         STUDENT("Student"),
         LECTURER("Lecturer"),
-        PATIENT("Patient"),
     }
 
-    enum class HealthRecordTypes(val recordType: String) {
-        VISITS("VISITS"),
-        APPOINTMENTS("APPOINTMENTS")
+    enum class Levels(val level: String){
+        ONE("100 Level"),
+        TWO("200 Level"),
+        THREE("300 Level"),
+        FOUR("400 Level"),
     }
+
+
 
     private const val STUDENTS_REF = "Correps Students"
     private const val LECTURERS_REF = "Correps Lecturers"
