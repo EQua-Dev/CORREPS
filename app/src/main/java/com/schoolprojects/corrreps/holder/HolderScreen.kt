@@ -33,6 +33,7 @@ import com.schoolprojects.corrreps.utils.Common.mAuth
 import com.schoolprojects.corrreps.navigation.Screen
 import com.schoolprojects.corrreps.screens.auth.ForgotPasswordScreen
 import com.schoolprojects.corrreps.screens.auth.SignUpScreen
+import com.schoolprojects.corrreps.screens.feespayment.PaysFees
 import com.schoolprojects.corrreps.screens.student.SemesterScreen
 import com.schoolprojects.corrreps.screens.student.StudentHomeScreen
 import org.devstrike.persacg.presentation.screens.holder.HolderViewModel
@@ -230,6 +231,7 @@ fun ScaffoldSection(
                 composable(Screen.StudentHome.route) {
                     onStatusBarColorChange(MaterialTheme.colorScheme.background)
                     StudentHomeScreen(
+                        baseNavHostController = controller,
                         onNavigationRequested = onNavigationRequested,
                         onSemesterSelected = onSemesterSelected
                     )
@@ -255,6 +257,22 @@ fun ScaffoldSection(
                     val semester = it.arguments?.getString("semester")
                     SemesterScreen(
                         level = level!!, semester = semester!!
+                        //onBackRequested = onBackRequested,
+
+                    )
+                }
+                composable(
+                    Screen.FeesPayment.route,
+                    /*arguments = listOf(
+                        navArgument(name = "level") { type = NavType.StringType },
+                        navArgument(name = "semester") { type = NavType.StringType }
+                    ),*/
+                ) {
+                    onStatusBarColorChange(MaterialTheme.colorScheme.background)
+                    val level = it.arguments?.getString("level")
+                    val semester = it.arguments?.getString("semester")
+                    PaysFees(
+                        //level = level!!, semester = semester!!
                         //onBackRequested = onBackRequested,
 
                     )

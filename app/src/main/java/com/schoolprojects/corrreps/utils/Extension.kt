@@ -20,7 +20,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
-
+import kotlin.random.Random
 
 
 //toast function
@@ -70,3 +70,23 @@ fun openDial(phoneNumber: String, context: Context) {
     intent.data = Uri.parse("tel:$phoneNumber")
     context.startActivity(intent)
 }
+
+
+// Helper function to generate a payment reference
+fun generatePaymentRef(): String {
+    var seed: Long = System.currentTimeMillis()
+    seed++
+    val randomNumber = Random(seed).nextInt(100000, 999999.toInt())
+    return "REF$randomNumber"
+}
+
+
+/*
+fun copyToClipboard(context: Context, text: String, label: String = "Copied Text") {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText(label, text)
+    clipboard.setPrimaryClip(clip)
+
+    // Optionally show a toast message to indicate successful copy
+    Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+}*/

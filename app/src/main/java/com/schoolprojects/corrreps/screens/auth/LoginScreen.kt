@@ -159,7 +159,10 @@ fun LoginScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            TextButton(onClick = { /* Handle pay fees */ }) {
+            TextButton(onClick = {
+                onNavigationRequested(Screen.FeesPayment.route, false)
+                /* Handle pay fees */
+            }) {
                 Text("Pay Fees")
             }
 

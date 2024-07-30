@@ -47,7 +47,7 @@ fun ExpandableCard(level: Levels, onSemesterClicked: (semester: String) -> Unit)
             Text(level.level, style = Typography.titleMedium)
             if (expanded) {
                 Spacer(modifier = Modifier.height(8.dp))
-                listOf("First Semester", "Second Semester").forEach { semester ->
+                listOf("First", "Second").forEach { semester ->
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),

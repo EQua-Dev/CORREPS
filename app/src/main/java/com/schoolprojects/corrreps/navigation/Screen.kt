@@ -34,6 +34,11 @@ sealed class Screen(
         title = R.string.semester_screen,
         //icon = R.drawable.ic_home_empty,
     )
+    object FeesPayment  : Screen(
+        route = "payfees",
+        title = R.string.pay_fees,
+        //icon = R.drawable.ic_home_empty,
+    )
     /*
     object CourseRegistration : Screen(
         route = "courseregistration",

@@ -37,22 +37,26 @@ object Common {
     }
 
     enum class Levels(val level: String){
-        ONE("100 Level"),
-        TWO("200 Level"),
-        THREE("300 Level"),
-        FOUR("400 Level"),
+        ONE("100"),
+        TWO("200"),
+        THREE("300"),
+        FOUR("400"),
     }
 
 
 
     private const val STUDENTS_REF = "Correps Students"
     private const val LECTURERS_REF = "Correps Lecturers"
-    private const val COURSES_REF = "Courses"
+    private const val COURSES_REF = "Correps Courses"
+    private const val REGISTERED_COURSES_REF = "Correps Registered Courses"
+    private const val FEES_PAYMENT_REF = "Correps Payments"
     //const val HEALTH_RECORD_REF = "Patrealysis Health Record"
 
     val studentsCollectionRef = Firebase.firestore.collection(STUDENTS_REF)
     val lecturersCollectionRef = Firebase.firestore.collection(LECTURERS_REF)
-    val coursesCollectionRef = Firebase.firestore.collection(COURSES_REF)
+    val coursesCollectionRef =  Firebase.firestore.collection(COURSES_REF)
+    val registeredCoursesCollectionRef =  Firebase.firestore.collection(REGISTERED_COURSES_REF)
+    val feePaymentCollection = Firebase.firestore.collection(FEES_PAYMENT_REF)
     //val healthRecordCollectionRef = Firebase.firestore.collection(HEALTH_RECORD_REF)
 
     fun logout() {
