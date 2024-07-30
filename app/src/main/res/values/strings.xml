@@ -7,4 +7,6 @@
     <string name="student_home">Student Home</string>
     <string name="semester_screen">Semester Screen</string>
     <string name="pay_fees">Pay Fees</string>
+    <string name="lecturer_home">Lecturer Home</string>
+    <string name="student_courses">Student Courses</string>
 </resources>

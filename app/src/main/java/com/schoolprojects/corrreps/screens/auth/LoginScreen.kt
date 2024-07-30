@@ -110,8 +110,8 @@ fun LoginScreen(
                         onLoading = {
                             showLoading.value = it
                         },
-                        onAuthenticated = {
-                            onNavigationRequested(Screen.StudentHome.route, false)
+                        onAuthenticated = { route ->
+                            onNavigationRequested(route, false)
                         },
                         onAuthenticationFailed = { error ->
                             errorMessage.value = error

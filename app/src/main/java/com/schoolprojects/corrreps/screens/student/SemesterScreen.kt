@@ -2,17 +2,15 @@ package com.schoolprojects.corrreps.screens.student
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -20,13 +18,9 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -50,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.schoolprojects.corrreps.models.Course
 import com.schoolprojects.corrreps.models.CourseScore
 import com.schoolprojects.corrreps.models.PaidFee
+import com.schoolprojects.corrreps.models.RegisteredCourse
 import com.schoolprojects.corrreps.utils.Common.mAuth
 import com.schoolprojects.corrreps.viewmodels.StudentHomeViewModel
 import java.util.UUID
@@ -77,8 +72,26 @@ fun SemesterScreen(
 
     val foundPayment = remember { mutableStateOf(PaidFee()) }
 
-    LaunchedEffect(key1 = courseList) {
+    val TAG = "SemesterScreen"
+    // Store registered courses
+    val registeredCourses = remember { mutableStateListOf<RegisteredCourse>() }
+    // Fetch registered courses when the screen is first displayed
+    LaunchedEffect(Unit) {
 
+        studentHomeViewModel.getRegisteredCourses(
+            studentId = mAuth.uid!!,
+            level = level,
+            semester = semester,
+            onCoursesFetched = { courses ->
+                registeredCourses.clear()
+                registeredCourses.addAll(courses)
+                Log.d(TAG, "SemesterScreen: ${registeredCourses.toList()}")
+            },
+            onFailure = { e ->
+                Toast.makeText(context, "Failed to fetch courses: ${e.message}", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        )
     }
 
     Scaffold(
@@ -94,7 +107,7 @@ fun SemesterScreen(
                             Text(text = "Name: $studentName", fontSize = 14.sp)
                             Text(text = "Reg No: $studentRegNumber", fontSize = 14.sp)
                         }
-                        if (courses.isEmpty()) {
+                        if (registeredCourses.isEmpty() && foundPayment.value.paymentRef.isBlank()) {
                             Button(onClick = { isDialogOpen = true }) {
                                 Text(text = "Register")
                             }
@@ -117,7 +130,7 @@ fun SemesterScreen(
                 )
 
 
-                if (courseList.isEmpty()) {
+                if (courseList.isEmpty() && foundPayment.value.paymentRef.isBlank() && registeredCourses.isEmpty()) {
                     Card(
                         modifier = Modifier
                             .fillMaxSize()
@@ -137,7 +150,7 @@ fun SemesterScreen(
                             )
                         }
                     }
-                } else {
+                } else if (registeredCourses.isEmpty()) {
                     Text(
                         text = "Total Credit Units: $totalCreditUnits",
                         fontSize = 16.sp,
@@ -189,6 +202,17 @@ fun SemesterScreen(
                                         ).show()
                                         selectedCourses.clear() // Clear selection after registration
                                         courseList.clear() // Optionally clear the course list
+                                        studentHomeViewModel.getRegisteredCourses(
+                                            studentId = mAuth.uid!!,
+                                            level = level,
+                                            semester = semester,
+                                            onCoursesFetched = { fetchedCourses ->
+                                                registeredCourses.toMutableList().clear()
+                                                registeredCourses.toMutableList().addAll(courses)
+                                            },
+                                            onFailure = {
+
+                                            })
                                     },
                                     onFailure = { e ->
                                         Toast.makeText(
@@ -207,6 +231,12 @@ fun SemesterScreen(
                                 .fillMaxWidth()
                         ) {
                             Text(text = "Register")
+                        }
+                    }
+                } else {
+                    LazyColumn {
+                        items(registeredCourses) { course ->
+                            RegisteredCourseItem(course)
                         }
                     }
                 }
@@ -275,31 +305,5 @@ fun SemesterScreen(
                 }
             }
         )
-    }
-}
-
-@Composable
-fun CourseItem(
-    course: Course,
-    isSelected: Boolean,
-    onCourseSelected: (Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .background(if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent)
-            .clickable { onCourseSelected(!isSelected) },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Checkbox(
-            checked = isSelected,
-            onCheckedChange = { onCourseSelected(it) }
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Column {
-            Text(text = "${course.courseCode} - ${course.courseTitle}", fontSize = 16.sp)
-            Text(text = "Credit Units: ${course.creditUnits}", fontSize = 14.sp, color = Color.Gray)
-        }
     }
 }

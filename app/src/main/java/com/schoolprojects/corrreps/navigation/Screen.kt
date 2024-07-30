@@ -30,7 +30,7 @@ sealed class Screen(
         title = R.string.student_home,
     )
     object SemesterScreen : Screen(
-        route = "semesterscreen/{level}/{semester}",
+        route = "semesterscreen/{level}/{semester}/{userType}",
         title = R.string.semester_screen,
         //icon = R.drawable.ic_home_empty,
     )
@@ -38,6 +38,15 @@ sealed class Screen(
         route = "payfees",
         title = R.string.pay_fees,
         //icon = R.drawable.ic_home_empty,
+    )
+    object LecturerHome : Screen(
+        route = "lecturerhome",
+        title = R.string.lecturer_home,
+    )
+
+    object StudentCourses : Screen(
+        route = "studentcourses/{studentId}/{level}/{semester}",
+        title = R.string.student_courses,
     )
     /*
     object CourseRegistration : Screen(

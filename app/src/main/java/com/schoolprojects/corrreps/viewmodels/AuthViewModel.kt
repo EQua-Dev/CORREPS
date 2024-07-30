@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.schoolprojects.corrreps.models.Student
+import com.schoolprojects.corrreps.navigation.Screen
 import com.schoolprojects.corrreps.utils.Common
 import com.schoolprojects.corrreps.utils.Common.mAuth
 import com.schoolprojects.corrreps.utils.Common.studentsCollectionRef
@@ -137,7 +138,7 @@ class AuthViewModel @Inject constructor() : ViewModel() {
                                     studentGender = this.gender.value,
                                     studentDepartment = this.studentDepartment.value,
                                     studentCurrentLevel = "100",
-                                    studentCurrentSemester = "1",
+                                    studentCurrentSemester = "First",
                                 )
                                 saveStudent(
                                     newStudent,
@@ -178,13 +179,14 @@ class AuthViewModel @Inject constructor() : ViewModel() {
           } else {
               if (this.email.value == "admin@gmail.com" && this.password.value == "!Admin1234") {
                   onLoading(false)
-                  onAuthenticated(Common.UserTypes.LECTURER.userType)
+                  onAuthenticated(Screen.LecturerHome.route)
               } else {
                   this.email.value.let { mAuth.signInWithEmailAndPassword(it, this.password.value) }
                       .addOnCompleteListener {
                           if (it.isSuccessful) {
                               onLoading(false)
-                              onAuthenticated(Common.UserTypes.STUDENT.userType)
+
+                              onAuthenticated(Screen.StudentHome.route)
                           } else {
                               onLoading(false)
 

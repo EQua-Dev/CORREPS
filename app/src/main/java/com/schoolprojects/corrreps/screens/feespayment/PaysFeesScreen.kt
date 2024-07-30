@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.schoolprojects.corrreps.components.DropdownMenuBox
 import com.schoolprojects.corrreps.viewmodels.PayFeesViewModel
-import org.devstrike.persacg.utils.generatePaymentRef
+import com.schoolprojects.corrreps.utils.generatePaymentRef
 
 @Composable
 fun PaysFees(modifier: Modifier = Modifier, payFeesViewModel: PayFeesViewModel = hiltViewModel()) {

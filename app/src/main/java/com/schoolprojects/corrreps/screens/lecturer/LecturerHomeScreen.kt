@@ -1,4 +1,4 @@
-package com.schoolprojects.corrreps.screens.student
+package com.schoolprojects.corrreps.screens.lecturer
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,7 +21,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,47 +29,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import com.google.firebase.firestore.auth.User
 import com.schoolprojects.corrreps.components.ExpandableCard
-import com.schoolprojects.corrreps.models.Student
 import com.schoolprojects.corrreps.navigation.Screen
-import com.schoolprojects.corrreps.network.getStudentInfo
 import com.schoolprojects.corrreps.ui.theme.Typography
 import com.schoolprojects.corrreps.utils.Common
-import com.schoolprojects.corrreps.utils.Common.mAuth
-import com.schoolprojects.corrreps.viewmodels.StudentHomeViewModel
+import com.schoolprojects.corrreps.viewmodels.LecturerHomeViewModel
 
 @Composable
-fun StudentHomeScreen(
-    baseNavHostController: NavHostController,
+fun LecturerHomeScreen(
+    modifier: Modifier = Modifier,
+    onLogoutRequested: (() -> Unit),
     onNavigationRequested: (String, Boolean) -> Unit,
     onSemesterSelected: (level: String, semester: String, userType: String) -> Unit,
-    studentHomeViewModel: StudentHomeViewModel = hiltViewModel()
+    lecturerHomeViewModel: LecturerHomeViewModel = hiltViewModel()
 ) {
 
-    val studentData by remember {
-        studentHomeViewModel.studentInfo
-    }
-    val errorMessage = remember { mutableStateOf("") }
-    val showLoading by remember { mutableStateOf(studentHomeViewModel.showLoading) }
-    val openDialog by remember { mutableStateOf(studentHomeViewModel.openDialog) }
+    val showLoading by remember { mutableStateOf(lecturerHomeViewModel.showLoading) }
 
-
-
-    LaunchedEffect(key1 = null) {
-        getStudentInfo(
-            mAuth.uid!!,
-            onLoading = {
-                studentHomeViewModel.updateLoadingStatus(it)
-            },
-            onStudentDataFetched = { student ->
-                studentHomeViewModel.updateStudentInfo(student)
-            },
-            onStudentNotFetched = { error ->
-                errorMessage.value = error
-            })
-    }
+    val openDialog by remember { mutableStateOf(lecturerHomeViewModel.openDialog) }
 
 
     Scaffold(
@@ -86,7 +61,7 @@ fun StudentHomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Hello, ${studentData.studentFirstName}",
+                        text = "Hello, Admin",
                         modifier = Modifier
                             .weight(0.6f)
                             .padding(4.dp),
@@ -97,7 +72,7 @@ fun StudentHomeScreen(
                         imageVector = Icons.Filled.Logout,
                         contentDescription = null,
                         modifier = Modifier.clickable {
-                            studentHomeViewModel.updateDialogStatus()
+                            lecturerHomeViewModel.updateDialogStatus()
                         })
                 }
             }
@@ -112,28 +87,10 @@ fun StudentHomeScreen(
                 end = 8.dp
             )
         ) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column {
-                        val studentName =
-                            "${studentData.studentFirstName} ${studentData.studentLastName}"
-                        Text(text = studentName)
-                        Text(text = studentData.studentRegNo)
-                    }
-                    Spacer(modifier = Modifier.weight(1.0f))
-                    Column {
-                        Text(text = "Level: ${studentData.studentCurrentLevel}")
-                        Text(text = "Semester: ${studentData.studentCurrentSemester}")
-                        Text(text = studentData.studentCGPA, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
+
             items(Common.Levels.entries) { level ->
                 ExpandableCard(level, onSemesterClicked = { semester ->
-                    onSemesterSelected(level.level, semester, Common.UserTypes.STUDENT.userType)
+                    onSemesterSelected(level.level, semester, Common.UserTypes.LECTURER.userType)
                 })
             }
 
@@ -164,8 +121,8 @@ fun StudentHomeScreen(
                 TextButton(
                     onClick = {
                         Common.mAuth.signOut()
-                        baseNavHostController.navigate(Screen.Login.route)
-                        studentHomeViewModel.updateDialogStatus()
+                        onNavigationRequested(Screen.Login.route, false)
+                        lecturerHomeViewModel.updateDialogStatus()
                     }
                 ) {
                     Text("Yes")
@@ -174,7 +131,7 @@ fun StudentHomeScreen(
             dismissButton = {
                 TextButton(
                     onClick = {
-                        studentHomeViewModel.updateDialogStatus()
+                        lecturerHomeViewModel.updateDialogStatus()
                     }
                 ) {
                     Text("No")
