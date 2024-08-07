@@ -53,14 +53,14 @@ fun PaysFees(modifier: Modifier = Modifier, payFeesViewModel: PayFeesViewModel =
 
     // Sample fee structure, map each semester to its fee
     val feesMap = mapOf(
-        "100 Level - 1st Semester" to "208500",
-        "100 Level - 2nd Semester" to "113500",
-        "200 Level - 1st Semester" to "203500",
-        "200 Level - 2nd Semester" to "116500",
-        "300 Level - 1st Semester" to "203500",
-        "300 Level - 2nd Semester" to "116500",
-        "400 Level - 1st Semester" to "203500",
-        "400 Level - 2nd Semester" to "116500"
+        "100 - First" to "208500",
+        "100 - Second" to "113500",
+        "200 - First" to "203500",
+        "200 - Second" to "116500",
+        "300 - First" to "203500",
+        "300 - Second" to "116500",
+        "400 - First" to "203500",
+        "400 - Second" to "116500"
     )
 
     // Levels and semesters
@@ -105,7 +105,7 @@ fun PaysFees(modifier: Modifier = Modifier, payFeesViewModel: PayFeesViewModel =
         Spacer(modifier = Modifier.height(16.dp))
 
         // Level Dropdown
-        DropdownMenuBox(selectedLevel, levels, onSelect = {
+        DropdownMenuBox("Select Level", selectedLevel, levels, onSelect = {
             selectedLevel = it
             updatePaymentAmount() // Update amount based on selection
         })
@@ -113,7 +113,7 @@ fun PaysFees(modifier: Modifier = Modifier, payFeesViewModel: PayFeesViewModel =
         Spacer(modifier = Modifier.height(8.dp))
 
         // Semester Dropdown
-        DropdownMenuBox(selectedSemester, semesters, onSelect = {
+        DropdownMenuBox("Select Semester", selectedSemester, semesters, onSelect = {
             selectedSemester = it
             updatePaymentAmount() // Update amount based on selection
         })

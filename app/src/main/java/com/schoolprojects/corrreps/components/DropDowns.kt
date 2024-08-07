@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -69,7 +70,12 @@ fun DropdownField(
 
 // Custom DropdownMenu Composable
 @Composable
-fun DropdownMenuBox(selectedItem: String, items: List<String>, onSelect: (String) -> Unit) {
+fun DropdownMenuBox(
+    label: String,
+    selectedItem: String,
+    items: List<String>,
+    onSelect: (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
 
     Box(
@@ -77,27 +83,32 @@ fun DropdownMenuBox(selectedItem: String, items: List<String>, onSelect: (String
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Text(
-            text = selectedItem,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = true }
-                .padding(12.dp)
-                .background(Color.LightGray),
-            color = Color.Black
-        )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            items.forEach { item ->
-                DropdownMenuItem(onClick = {
-                    onSelect(item)
-                    expanded = false
-                }, text = {
-                    Text(text = item)
-                })
+        Column {
+            Text(text = label)
+
+            Text(
+                text = selectedItem,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = true }
+                    .padding(12.dp)
+                    .background(Color.LightGray),
+                color = Color.Black
+            )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                items.forEach { item ->
+                    DropdownMenuItem(onClick = {
+                        onSelect(item)
+                        expanded = false
+                    }, text = {
+                        Text(text = item)
+                    })
+                }
             }
         }
+
     }
 }

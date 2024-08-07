@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,15 +54,18 @@ fun StudentHomeScreen(
     val studentData by remember {
         studentHomeViewModel.studentInfo
     }
+    val studentCGPA by remember {
+        studentHomeViewModel.cgpa
+    }.collectAsState()
+
     val errorMessage = remember { mutableStateOf("") }
     val showLoading by remember { mutableStateOf(studentHomeViewModel.showLoading) }
     val openDialog by remember { mutableStateOf(studentHomeViewModel.openDialog) }
 
 
 
-    LaunchedEffect(key1 = null) {
-        getStudentInfo(
-            mAuth.uid!!,
+    LaunchedEffect(key1 = Unit) {
+        studentHomeViewModel.getStudentInfo(
             onLoading = {
                 studentHomeViewModel.updateLoadingStatus(it)
             },
@@ -90,7 +94,7 @@ fun StudentHomeScreen(
                         modifier = Modifier
                             .weight(0.6f)
                             .padding(4.dp),
-                        style = Typography.titleMedium,
+                        style = Typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Icon(
@@ -127,7 +131,7 @@ fun StudentHomeScreen(
                     Column {
                         Text(text = "Level: ${studentData.studentCurrentLevel}")
                         Text(text = "Semester: ${studentData.studentCurrentSemester}")
-                        Text(text = studentData.studentCGPA, fontWeight = FontWeight.Bold)
+                        Text(text = studentCGPA?.toString() ?: "N/A", fontWeight = FontWeight.Bold)
                     }
                 }
             }

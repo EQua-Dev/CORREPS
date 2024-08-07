@@ -28,6 +28,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -45,6 +47,7 @@ import com.schoolprojects.corrreps.models.Course
 import com.schoolprojects.corrreps.models.CourseScore
 import com.schoolprojects.corrreps.models.PaidFee
 import com.schoolprojects.corrreps.models.RegisteredCourse
+import com.schoolprojects.corrreps.ui.theme.Typography
 import com.schoolprojects.corrreps.utils.Common.mAuth
 import com.schoolprojects.corrreps.viewmodels.StudentHomeViewModel
 import java.util.UUID
@@ -61,11 +64,13 @@ fun SemesterScreen(
     var isDialogOpen by remember { mutableStateOf(false) }
     var paymentReference by remember { mutableStateOf("") }
 
-    val studentName: String = "Kalvin"
-    val studentRegNumber: String = "CST/2016419"
+    val studentInfo by remember {
+        studentHomeViewModel.studentInfo
+    }
     val courseList = remember { mutableStateListOf<Course>() }
     val selectedCourses = remember { mutableStateListOf<Course>() }
     var totalCreditUnits by remember { mutableStateOf(0) }
+    var semesterGpa by remember { mutableDoubleStateOf(0.0) }
     val courses = mutableListOf<CourseScore>() // Assume Course is a data class for course info
     /*onRegisterClick: (String) -> Unit, // Callback for registration reference submission
     checkPaymentReference: (String) -> Boolean*/
@@ -82,7 +87,8 @@ fun SemesterScreen(
             studentId = mAuth.uid!!,
             level = level,
             semester = semester,
-            onCoursesFetched = { courses ->
+            onCoursesFetched = { courses, gpa ->
+                semesterGpa = gpa
                 registeredCourses.clear()
                 registeredCourses.addAll(courses)
                 Log.d(TAG, "SemesterScreen: ${registeredCourses.toList()}")
@@ -104,8 +110,13 @@ fun SemesterScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text(text = "Name: $studentName", fontSize = 14.sp)
-                            Text(text = "Reg No: $studentRegNumber", fontSize = 14.sp)
+                            val studentName =
+                                "${studentInfo.studentFirstName} ${studentInfo.studentLastName}"
+                            Text(text = "Name: $studentName", style = Typography.bodyLarge)
+                            Text(
+                                text = "Reg No: ${studentInfo.studentRegNo}",
+                                style = Typography.bodyLarge
+                            )
                         }
                         if (registeredCourses.isEmpty() && foundPayment.value.paymentRef.isBlank()) {
                             Button(onClick = { isDialogOpen = true }) {
@@ -123,11 +134,24 @@ fun SemesterScreen(
                 .padding(innerPadding)
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "Level: $level Semester: $semester",
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(8.dp)
-                )
+                // Display Level, Semester, and GPA in a Row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Level: $level Semester: $semester",
+                        fontSize = 20.sp
+                    )
+                    Text(
+                        text = "GPA: %.2f".format(semesterGpa),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
 
                 if (courseList.isEmpty() && foundPayment.value.paymentRef.isBlank() && registeredCourses.isEmpty()) {
@@ -179,7 +203,7 @@ fun SemesterScreen(
                     if (selectedCourses.size > 0) {
                         Button(
                             onClick = {
-                                val registeredCourses = selectedCourses.map {
+                                val regCourses = selectedCourses.map {
                                     CourseScore(
                                         scoreId = UUID.randomUUID()
                                             .toString(), // Unique ID for each course
@@ -187,13 +211,14 @@ fun SemesterScreen(
                                         courseId = it.courseCode, // Using course code as ID
                                         caScore = "0", // Default score, can be updated later
                                         examScore = "0",
-                                        totalScore = "0",
+                                        totalScore = 0,
                                         scoreSemester = semester,
-                                        scoreLevel = level
+                                        scoreLevel = level,
+                                        courseCreditUnit = it.creditUnits
                                     )
                                 }
                                 studentHomeViewModel.registerCourses(
-                                    courses = registeredCourses,
+                                    courses = regCourses,
                                     onSuccess = {
                                         Toast.makeText(
                                             context,
@@ -206,9 +231,10 @@ fun SemesterScreen(
                                             studentId = mAuth.uid!!,
                                             level = level,
                                             semester = semester,
-                                            onCoursesFetched = { fetchedCourses ->
-                                                registeredCourses.toMutableList().clear()
-                                                registeredCourses.toMutableList().addAll(courses)
+                                            onCoursesFetched = { fetchedCourses, gpa ->
+                                                semesterGpa = gpa
+//                                                registeredCourses.toMutableList().clear()
+//                                                registeredCourses.toMutableList().addAll(fetchedCourses)
                                             },
                                             onFailure = {
 
@@ -254,7 +280,7 @@ fun SemesterScreen(
                         value = paymentReference,
                         onValueChange = { paymentReference = it },
                         label = { Text("Reference Number") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                     )
                 }
             },

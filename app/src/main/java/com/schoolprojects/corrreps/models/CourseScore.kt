@@ -6,7 +6,8 @@ data class CourseScore(
     val courseId: String = "",
     val caScore: String = "0",
     val examScore: String = "0",
-    val totalScore: String = "0",
+    val totalScore: Int = 0,
     val scoreSemester: String = "",
     val scoreLevel: String = "",
+    val courseCreditUnit: String = ""
 )

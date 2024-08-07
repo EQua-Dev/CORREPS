@@ -118,7 +118,7 @@ class LecturerHomeViewModel @Inject constructor() : ViewModel() {
                 val updatedCourseScore = courseScore.copy(
                     caScore = caScore,
                     examScore = examScore,
-                    totalScore = totalScore
+                    totalScore = totalScore.toInt()
                 )
 
                 registeredCoursesCollectionRef.document(courseScore.scoreId)

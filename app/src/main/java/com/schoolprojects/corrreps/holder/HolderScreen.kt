@@ -208,14 +208,14 @@ fun ScaffoldSection(
                 startDestination = Screen.Login.route
             ) {
                 composable(Screen.Login.route) {
-                    onStatusBarColorChange(MaterialTheme.colorScheme.background)
+                    onStatusBarColorChange(Color(0xFFDE502C))
                     LoginScreen(
                         onNavigationRequested = onNavigationRequested,
                         onAuthenticated = onAuthenticated
                     )
                 }
                 composable(Screen.Signup.route) {
-                    onStatusBarColorChange(MaterialTheme.colorScheme.background)
+                    onStatusBarColorChange(Color(0xFFDE502C))
                     SignUpScreen(
                         onNavigationRequested = onNavigationRequested,
                         onAccountCreated = onAccountCreated,
@@ -231,14 +231,14 @@ fun ScaffoldSection(
                     )
                 }*/
                 composable(Screen.ForgotPassword.route) {
-                    onStatusBarColorChange(MaterialTheme.colorScheme.background)
+                    onStatusBarColorChange(Color(0xFFDE502C))
                     ForgotPasswordScreen(
                         onNavigationRequested = onNavigationRequested
                     )
                 }
 
                 composable(Screen.StudentHome.route) {
-                    onStatusBarColorChange(MaterialTheme.colorScheme.background)
+                    onStatusBarColorChange(Color(0xFFDE502C))
                     StudentHomeScreen(
                         baseNavHostController = controller,
                         onNavigationRequested = onNavigationRequested,
@@ -287,7 +287,7 @@ fun ScaffoldSection(
                         navArgument(name = "semester") { type = NavType.StringType }
                     ),*/
                 ) {
-                    onStatusBarColorChange(MaterialTheme.colorScheme.background)
+                    onStatusBarColorChange(Color(0xFFDE502C))
                     val level = it.arguments?.getString("level")
                     val semester = it.arguments?.getString("semester")
                     PaysFees(
@@ -300,7 +300,7 @@ fun ScaffoldSection(
                 composable(
                     Screen.LecturerHome.route,
                 ) {
-                    onStatusBarColorChange(MaterialTheme.colorScheme.background)
+                    onStatusBarColorChange(Color(0xFFDE502C))
                     LecturerHomeScreen(
                         onLogoutRequested = onLogoutRequested,
                         onNavigationRequested = onNavigationRequested,
@@ -315,7 +315,7 @@ fun ScaffoldSection(
                         navArgument(name = "semester") { type = NavType.StringType }
                     ),
                 ) {
-                    onStatusBarColorChange(MaterialTheme.colorScheme.background)
+                    onStatusBarColorChange(Color(0xFFDE502C))
                     val level = it.arguments?.getString("level")
                     val semester = it.arguments?.getString("semester")
                     val studentId = it.arguments?.getString("studentId")

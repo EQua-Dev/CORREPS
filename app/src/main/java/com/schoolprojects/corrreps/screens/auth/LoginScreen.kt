@@ -47,6 +47,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.schoolprojects.corrreps.R
 import com.schoolprojects.corrreps.components.CustomSnackbar
 import com.schoolprojects.corrreps.components.FlatButton
+import com.schoolprojects.corrreps.components.LogoAndBankName
 import com.schoolprojects.corrreps.navigation.Screen
 import com.schoolprojects.corrreps.viewmodels.AuthViewModel
 
@@ -76,6 +77,11 @@ fun LoginScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
+
+            // Display Logo and Bank Name
+            LogoAndBankName()
+
+            Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Login", style = MaterialTheme.typography.headlineMedium)
 
             Spacer(modifier = Modifier.height(16.dp))
